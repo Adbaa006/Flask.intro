@@ -2,10 +2,14 @@
 {% extends "base.html" %}
 {% block content %}
   <h1>Innlegg</h1>
-  <!-- TODO: Når du har laget posts (liste av lister) i app.py, loop og vis tittel med post[1] -->
-  <p>Her kommer listen over innlegg…</p>
-{% block content %}
-{% extends "post.html" %}
-{% block content %}
   
+  <p>Her kommer listen over innlegg…</p>
+  <ul>
+    {% for post in posts %}
+      <li>
+        {{ post[1] }}
+      </li>
+    {% endfor %}
+  </ul>
 {% block content %}
+
