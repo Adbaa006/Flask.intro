@@ -7,9 +7,9 @@
   <ul>
     {% for post in posts %}
       <li>
-        {{ post[1] }}
+        <a href="{{ url_for('post_detail', post_id=post[0]) }}">{{ post[1] }}</a>
       </li>
     {% endfor %}
   </ul>
-{% block content %}
+{% endblock %}
 
