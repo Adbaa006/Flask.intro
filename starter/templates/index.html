@@ -4,10 +4,11 @@
   <h1>Innlegg</h1>
   
   <p>Her kommer listen over innlegg…</p>
-  <ul>
+  <ul class="posts">
     {% for post in posts %}
       <li>
-        <a href="{{ url_for('post_detail', post_id=post[0]) }}">{{ post[1] }}</a>
+        <a href="{{ url_for('post_detail', post_id=post[0]) }}"><strong>{{ post[1] }}</strong>
+        </a>
       </li>
     {% endfor %}
   </ul>
