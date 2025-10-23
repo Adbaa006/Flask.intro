@@ -1,8 +1,10 @@
 
-from flask import Flask, render_template
+import sqlite3
+from flask import Flask, render_template, abort
 
 app = Flask(__name__)
 DB_PATH = "blog.db"
+
 
 def fetch_all_posts():
     with sqlite3.connect(DB_PATH) as con:
@@ -16,11 +18,45 @@ def fetch_post_by_id(post_id: int):
     with sqlite3.connect(DB_PATH) as con:
         con.row_factory = sqlite3.Row
         row = con.execute(
-            "SELECT id, title, content FROM posts WHERE id = ?;", (post_id)
+            "SELECT id, title, content FROM posts WHERE id = ?;", (post_id,)
         ).fetchone()
     if row is None:
         return None
     return [row["id"], row["title"], row["content"]]
+
+def legge_til_innlegg():
+    tittel = input("Skriv tittel: ")
+    innhold = input("Skriv innhold: ")
+    c.execute("INSERT INTO posts (title, content) VALUES(?,?)", (tittel, innhold))
+    databasekobling.commit()
+
+def slett_innlegg():
+    vare_id = input("Skriv ID-en til innlegget som skal slettes: ")
+    c.execute("DELETE FROM posts WHERE id = ?", (vare_id))
+    databasekobling.commit()
+
+def rediger_innlegg():
+    vare_id = input("Skriv ID-en til innlegget som skal endres: ")
+    c.execute("SELECT * FROM posts WHERE id = ?", (vare_id))
+    resultat = c.fetchone()
+    inn = ""
+    tittel = resultat[1]
+    innhold = resultat[2]
+
+    while inn != "q":
+        print(f"""
+        Hva vil du redigere?
+        1. Tittel: {tittel}
+        2. Innhold: {innhold}
+        "q" for å avslutte
+        """)
+        inn = input(": ")
+        if inn == "1":
+            tittel = input("Skriv inn ny tittel: ")
+        elif inn == "2":
+            innhold = input("Skriv inn nytt innhold: ")
+    c.execute("UPDATE posts SET title = ?, content = ? WHERE id = ?", (tittel, innhold, vare_id))
+    databasekobling.commit()
 
 @app.route("/")
 def hello():
@@ -33,8 +69,6 @@ def post_detail(post_id):
     if not post:
         abort(404)
     return render_template("post.html", post=post)
-
-from flask import abort
 
 def get_post_by_id(post_id: int):
     for p in posts:
