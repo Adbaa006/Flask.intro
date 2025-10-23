@@ -25,19 +25,36 @@ def fetch_post_by_id(post_id: int):
     return [row["id"], row["title"], row["content"]]
 
 def legge_til_innlegg():
-    tittel = input("Skriv tittel: ")
-    innhold = input("Skriv innhold: ")
-    c.execute("INSERT INTO posts (title, content) VALUES(?,?)", (tittel, innhold))
-    databasekobling.commit()
+    with sqlite3.connect(DB_PATH) as con:
+        con.row_factory = sqlite3.Row
+
+        tittel = input("Skriv tittel: ")
+        innhold = input("Skriv innhold: ")
+
+        row = con.execute(
+            "INSERT INTO posts (title, content) VALUES(?,?)", (tittel, innhold)
+    )
 
 def slett_innlegg():
-    vare_id = input("Skriv ID-en til innlegget som skal slettes: ")
-    c.execute("DELETE FROM posts WHERE id = ?", (vare_id))
-    databasekobling.commit()
+    with sqlite3.connect(DB_PATH) as con:
+        con.row_factory = sqlite3.Row
 
-def rediger_innlegg():
-    vare_id = input("Skriv ID-en til innlegget som skal endres: ")
-    c.execute("SELECT * FROM posts WHERE id = ?", (vare_id))
+        post_id = input("Skriv ID-en til innlegget som skal slettes: ")
+
+    row = con.execute(
+        "DELETE FROM posts WHERE id = ?", (post_id)
+    )
+
+# def rediger_innlegg():
+    with sqlite3.connect(DB_PATH) as con:
+        con.row_factory = sqlite3.Row
+
+        post_id = input("Skriv ID-en til innlegget som skal endres: ")
+    
+    row = con.execute(
+        "SELECT * FROM posts WHERE id = ?", (post_id)
+    )
+
     resultat = c.fetchone()
     inn = ""
     tittel = resultat[1]
@@ -55,7 +72,7 @@ def rediger_innlegg():
             tittel = input("Skriv inn ny tittel: ")
         elif inn == "2":
             innhold = input("Skriv inn nytt innhold: ")
-    c.execute("UPDATE posts SET title = ?, content = ? WHERE id = ?", (tittel, innhold, vare_id))
+    c.execute("UPDATE posts SET title = ?, content = ? WHERE id = ?", (tittel, innhold, post_id))
     databasekobling.commit()
 
 @app.route("/")
