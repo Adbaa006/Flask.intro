@@ -24,7 +24,7 @@ def fetch_post_by_id(post_id: int):
         return None
     return [row["id"], row["title"], row["content"]]
 
-@app.route("/ny_post")
+@app.route("/ny_post/<int:post_id>")
 def legge_til_innlegg():
     with sqlite3.connect(DB_PATH) as con:
         con.row_factory = sqlite3.Row
