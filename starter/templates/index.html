@@ -11,8 +11,8 @@
         <a href="{{ url_for('slett_innlegg', post_id=post[0])  }}">Slett</a>
         </a>
       </li>
-      <a href="{{  url_for('legge_til_innlegg')  }}">Nytt innlegg</a>
     {% endfor %}
   </ul>
+  <a href="{{  url_for('legge_til_innlegg')  }}">Nytt innlegg</a>
 {% endblock %}
 
