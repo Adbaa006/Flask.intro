@@ -24,26 +24,27 @@ def fetch_post_by_id(post_id: int):
         return None
     return [row["id"], row["title"], row["content"]]
 
+@app.route("/ny_post")
 def legge_til_innlegg():
     with sqlite3.connect(DB_PATH) as con:
         con.row_factory = sqlite3.Row
-
-        tittel = input("Skriv tittel: ")
-        innhold = input("Skriv innhold: ")
-
         row = con.execute(
             "INSERT INTO posts (title, content) VALUES(?,?)", (tittel, innhold)
     )
+    con.commit()
+    posts = fetch_all_posts()
+    return render_template("post.html", post=post)
 
-def slett_innlegg():
+@app.route("/slette/<int:post_id>")
+def slett_innlegg(post_id):
     with sqlite3.connect(DB_PATH) as con:
         con.row_factory = sqlite3.Row
-
-        post_id = input("Skriv ID-en til innlegget som skal slettes: ")
-
-    row = con.execute(
-        "DELETE FROM posts WHERE id = ?", (post_id)
-    )
+        row = con.execute(
+            "DELETE FROM posts WHERE id = ?", (post_id,)
+        ) 
+        con.commit()
+    posts = fetch_all_posts()
+    return render_template("index.html", posts=posts)
 
 # def rediger_innlegg():
     with sqlite3.connect(DB_PATH) as con:
