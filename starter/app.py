@@ -24,6 +24,12 @@ def fetch_post_by_id(post_id: int):
         return None
     return [row["id"], row["title"], row["content"]]
 
+def get_post_by_id(post_id: int):
+    for p in posts:
+        if p[0] == post_id:
+            return p
+    return None
+
 @app.route("/ny_post", methods=["GET", "POST"])
 def legge_til_innlegg():
     if request.method == "POST":
@@ -50,12 +56,10 @@ def slett_innlegg(post_id):
     posts = fetch_all_posts()
     return render_template("index.html", posts=posts)
 
-# def rediger_innlegg():
+# @app.route("/redigere/<int:post_id>")
+# def rediger_innlegg(post_id):
     with sqlite3.connect(DB_PATH) as con:
-        con.row_factory = sqlite3.Row
-
-        post_id = input("Skriv ID-en til innlegget som skal endres: ")
-    
+        con.row_factory = sqlite3.Row    
     row = con.execute(
         "SELECT * FROM posts WHERE id = ?", (post_id)
     )
@@ -78,7 +82,6 @@ def slett_innlegg(post_id):
         elif inn == "2":
             innhold = input("Skriv inn nytt innhold: ")
     c.execute("UPDATE posts SET title = ?, content = ? WHERE id = ?", (tittel, innhold, post_id))
-    databasekobling.commit()
 
 @app.route("/")
 def hello():
@@ -91,12 +94,6 @@ def post_detail(post_id):
     if not post:
         abort(404)
     return render_template("post.html", post=post)
-
-def get_post_by_id(post_id: int):
-    for p in posts:
-        if p[0] == post_id:
-            return p
-    return None
 
 @app.errorhandler(404)
 def page_not_found(e):
